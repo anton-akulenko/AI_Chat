@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+{% load static %}
+<!--<head>-->
+<!--    <meta charset="utf-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1">-->
+<!--    &lt;!&ndash; Latest compiled and minified CSS &ndash;&gt;-->
+
+<!--    <link rel="stylesheet" href="{% static 'llm_chat/style.css' %}">-->
+<!--    <link rel="stylesheet" href="https://bootswatch.com/5/flatly/bootstrap.min.css">-->
+<!--    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">-->
+<!--    <link rel="shortcut icon" href="/static/llm_chat/img/iconX.png">-->
+<!--    <title>doc X chat</title>-->
+<!--</head>-->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clarify Docs</title>
+
+    {% load static %}
+<!--    <script src="{% static 'llm_chat/scripts.js' %}"></script>-->
+    <link rel="stylesheet" href="{% static 'llm_chat/styles.css' %}">
+</head>
+<body>
+<nav style="margin-bottom: 20px; padding-left: 30px">
+    {% if user.is_authenticated %}
+
+    <ul>
+        <li ><a href="{% url 'profiles:edit_profile' username=user.username %}">Welcome <b>{{ user.username }}!</b></a></li>
+        <li ><a href="{% url 'base' %}" >Clarify Docs</a></li>
+        <li><a href="/llm_chat/upload_pdf" role="button" target="_blank">New Chat</a></li>
+        <li><a href="{% url 'profiles:logout' %}" role="button">Logout</a></li>
+    </ul>
+
+    {% else %}
+    <ul >
+        <li><a href="{% url 'profiles:create_profile' %}" role="button">Sign Up</a></li>
+        <li><a href="{% url 'profiles:login' %}"  role="button">Login</a></li>
+
+    </ul>
+    {% endif %}
+</nav>
+</body>
+
+{% block content %} {% endblock %}
+<footer class="footer fixed-bottom">
+
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.10.2/umd/popper.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.min.js"></script>
+
+<style>
+
+
+
+</style>
+<style>
+    .nav-link.dropdown-toggle {
+        margin-right: 5x; /* Змініть значення за бажанням */
+    }
+
+
+</style>
+<style>
+    .nav-item {
+        margin-right: 5px; /* Змініть значення за бажанням */
+    }
+
+
+</style>
+
+    <footer>
+        <strong>	&#169; Clarify Docs </strong>
+    </footer>
+</html>
