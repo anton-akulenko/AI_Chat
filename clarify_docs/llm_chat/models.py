@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from clarify_docs import settings
 
-User = settings.AUTH_USER_MODEL
+# User = settings.AUTH_USER_MODEL
 
 
 class CustomProfile(models.Model):

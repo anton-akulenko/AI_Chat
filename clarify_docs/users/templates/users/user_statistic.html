@@ -1,0 +1,63 @@
+{% extends 'llm_chat/base.html' %}
+
+{% block content %}
+
+<div class="container h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-md-4 text-center">
+            <a href="{% url 'users:user_plan_subscription' %}" class="btn btn-primary btn-lg" role="button">Upgrade
+                plan</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <br>
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <h4>Files:</h4>
+            <div class="progress">
+                <div class="progress-bar bg-info progress-bar-striped progress-bar-animated"
+                    style="width: {{ width_files }}%">
+                    <span class="file-progress-text">{{ user_data.total_files_uploaded }} / {{ max_files }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+
+    <br>
+    <div class="row">
+        <br>
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <h4>Questions:</h4>
+            <div class="progress">
+                <div class="progress-bar bg-success progress-bar-striped progress-bar-animated"
+                    style="width: {{ width_questions }}%">
+                    <span class="question-progress-text">{{ user_data.total_questions_asked }} / {{ max_questions
+                        }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+
+</div>
+
+<style>
+    .progress {
+        height: 50px;
+        background-color: #d7d7d7;
+        text-align: center;
+    }
+
+    .file-progress-text,
+    .question-progress-text {
+        color: #000;
+        /* Black color for the text */
+        line-height: 50px;
+        /* Make the text vertically centered */
+    }
+</style>
+
+{% endblock %}

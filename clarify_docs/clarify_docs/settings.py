@@ -11,8 +11,11 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
 from pathlib import Path
-
+from dotenv import load_dotenv
+import cloudinary.api
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -25,8 +28,8 @@ SECRET_KEY = "django-insecure-ol^$&!wd8lmc-^z=f!dk27c=w)1l7_vkx!$$+mkm4+#0r%2r!!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+# ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = ["*", "localhost", "127.0.0.1", "0.0.0.0"]
 
 # Application definition
 
@@ -37,8 +40,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "profiles",
+    # "profiles",
     "llm_chat",
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -49,6 +53,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # 'clarify_docs.context_processors.avatar_url',
 ]
 
 ROOT_URLCONF = "clarify_docs.urls"
@@ -83,8 +88,8 @@ DATABASES = {
     }
 }
 
-AUTH_USER_MODEL = 'profiles.UserProfile'
-# AUTH_USER_MODEL = 'llm_chat.UserProfile'
+# AUTH_USER_MODEL = 'profiles.UserProfile'
+# AUTH_USER_MODEL = 'users.UserProfile'
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -116,6 +121,17 @@ USE_I18N = True
 USE_TZ = True
 
 
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = os.getenv('EMAIL_PORT')
+EMAIL_STARTTLS = False
+EMAIL_USE_SSL = True
+EMAIL_USE_TLS = False
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
@@ -126,3 +142,10 @@ LOGIN_REDIRECT_URL = '/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+cloudinary.config(
+    cloud_name=os.getenv("CLOUD_NAME"),
+    api_key=os.getenv("CLOUD_API_KEY"),
+    api_secret=os.getenv("CLOUD_API_SECRET"),
+)

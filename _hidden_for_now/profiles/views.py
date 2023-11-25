@@ -41,7 +41,7 @@ def user_login(request):
             return redirect(to='profiles:login')
 
         auth_login(request, user)
-        return redirect(to='base')
+        return redirect(to='llm_chat:home')
 
     return render(request, 'login.html', context={"form": LoginForm()})
 
@@ -67,11 +67,11 @@ def delete_profile(request, username):
 
     if request.user == user_profile:
         user_profile.delete()
-        return redirect('profiles:index')
+        return redirect('llm_chat:home')
     else:
-        return redirect('profiles:index')
+        return redirect('llm_chat:home')
 
 
 def user_logout(request):
     logout(request)
-    return redirect('profiles:index')
+    return redirect('llm_chat:home')

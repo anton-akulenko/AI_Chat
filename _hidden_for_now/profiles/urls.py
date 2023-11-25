@@ -4,7 +4,7 @@ from .views import user_logout, create_profile, edit_profile, delete_profile, us
 app_name = 'profiles'
 
 urlpatterns = [
-    path('', index, name='index'),
+    # path('', index, name='index'),
     path('login/', user_login, name='login'),
     path('create/', create_profile, name='create_profile'),
     path('<str:username>/edit/', edit_profile, name='edit_profile'),

@@ -1,0 +1,121 @@
+{% extends 'llm_chat/base.html' %}
+
+{% load static %}
+{% block content %}
+
+<div class="container">
+    <br>
+    <div class="text-center">
+        <!-- Повідомлення та помилки -->
+        {% if form.errors %}
+        <div class="alert alert-danger" role="alert">
+            <strong>Error:</strong> Please correct the following errors:
+            <ul>
+                {{form.email.errors.as_ul}}
+                {{form.username.errors.as_ul}}
+                {{form.password.errors.as_ul}}
+            </ul>
+        </div>
+        {% endif %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}" role="alert">{{ message }}</div>
+        {% endfor %}
+        <div class="form-box">
+            <a href="/" class="bg-image-link"></a>
+            <h4 class="titleForm">LOGIN</h4>
+
+            <form action="{% url 'users:login' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <br>
+                <div class="form-group">
+                    <input class="form-control" type="text" name="username" placeholder="Username">
+                </div>
+                <br>
+                <div class="form-group">
+                    <input class="form-control" type="password" name="password" placeholder="Password">
+                </div>
+                <br>
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="reset" class="btn btn-secondary">Reset</button>
+                <br>
+                <div class="mt-2.5">
+                    <span>Don't have an account?</span>
+                    <a href="/users/signup">Sign up</a>
+                </div>
+                <br>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" width="32"
+                    height="32"><i> Continue with Google </i>
+                </a>
+
+
+                <br>
+                <div class="small text-right forgot-password">
+                    <a href="{% url 'users:password_reset' %}" class="text-center"><i>Forgot Password?</i></a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<br>
+
+<script>
+    // повідомлення зникає через 5 сек
+    setTimeout(function () {
+        var alerts = document.querySelectorAll(".alert");
+        alerts.forEach(function (alert) {
+            alert.style.display = "none";
+        });
+    }, 5000);
+
+
+</script>
+
+<style>
+    .bg-image-link {
+        display: block;
+        width: 35px;
+        height: 35px;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-image: url("{% static 'llm_chat/img/iconX.png' %}");
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        z-index: 10;
+    }
+
+    .form-box {
+        position: relative;
+        width: 400px;
+        margin: 0 auto;
+        padding: 20px 20px 60px 20px;
+        background-color: rgba(247, 247, 247, 0.9);
+        border: 5px solid #ccc;
+        border-radius: 15px;
+    }
+
+    .google-login {
+        margin-left: 12px;
+        border: 1px solid #cccccc;
+        padding: 5px;
+        display: inline-block;
+        border-radius: 5px;
+        text-decoration: none;
+    }
+
+    .forgot-password {
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
+    }
+
+    @media (max-width: 768px) {
+        .form-box {
+            width: 90%;
+            padding: 10px;
+        }
+    }
+</style>
+
+{% endblock %}

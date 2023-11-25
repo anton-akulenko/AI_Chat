@@ -128,7 +128,7 @@ def upload_pdf(request):
     user_pdfs = PDFDocument.objects.filter(user=request.user)
     # not needed for now
     chat_message = ChatMessage.objects.all()
-    return render(request, 'llm_chat/home.html', {'form': form, 'user_pdfs': user_pdfs})
+    return render(request, 'llm_chat/chat.html', {'form': form, 'user_pdfs': user_pdfs})
 
 
 @login_required(login_url="/login/")
@@ -172,7 +172,7 @@ def ask_question(request):
     context = {'chat_response': chat_response, 'chat_history': chat_history, 'user_question': user_question,
                'user_pdfs': user_pdfs, 'chat_message': chat_message}
 
-    return render(request, 'llm_chat/home.html', context)
+    return render(request, 'llm_chat/chat.html', context)
 
 
 @login_required(login_url="/login/")
@@ -185,6 +185,68 @@ def get_chat_history(request):
     messages = ChatMessage.objects.filter(pdf_document_id=pdf_id).values('message', 'answer', 'timestamp')
 
     return JsonResponse(list(messages), safe=False)
+
+
+# @login_required(login_url="/login/")
+# def view_pdf(request, pdf_id):
+#     """
+#     Displays a PDF document.
+
+#     :param request: HTTP request.
+#     :param pdf_id: ID of the PDF document.
+#     :return: Rendered page with the PDF document.
+#     """
+#     pdf = PDFDocument.objects.get(id=pdf_id)
+#     return render(request, 'view_pdf.html', {'pdf': pdf})
+
+# @login_required(login_url="/login/")
+# def list_pdfs(request):
+#     """
+#     Lists PDF documents for the logged-in user.
+
+#     :param request: HTTP request.
+#     :return: Rendered page with the list of PDF documents.
+#     """
+#     pdfs = PDFDocument.objects.filter(user=request.user)
+#     return render(request, 'edit_pdf.html', {'pdfs': pdfs})
+
+# @login_required(login_url="/login/")
+# def delete_pdf(request, pdf_id):
+#     """
+#     Deletes a PDF document.
+
+#     :param request: HTTP request.
+#     :param pdf_id: ID of the PDF document to delete.
+#     :return: Redirect or error response.
+#     """
+#     try:
+#         pdfs = PDFDocument.objects.get(id=pdf_id)
+#         pdf_title = getattr(pdfs, 'document', pdfs.title)
+#         pdfs.delete()
+#         return redirect('/pdfs/')
+#     except PDFDocument.DoesNotExist:
+#         # Handle the case where the PDFDocument with the given id does not exist
+#         return HttpResponseNotFound("PDF not found")
+
+# @login_required(login_url="/login/")
+# def update_pdf(request, pdf_id):
+#     """
+#     Updates a PDF document.
+
+#     :param request: HTTP request.
+#     :param pdf_id: ID of the PDF document to update.
+#     :return: Rendered page with the updated PDF document.
+#     """
+#     pdf = get_object_or_404(PDFDocument, pk=pdf_id)
+#     if request.method == 'POST':
+#         form = PDFDocumentForm2(request.POST, instance=pdf)
+#         if form.is_valid():
+#             form.save()
+#             messages.success(request, 'Pdf updated successfully.')
+#             return redirect('/pdfs/')
+#     else:
+#         form = PDFUpdateForm(instance=pdf)
+#     return render(request, 'update_pdf.html', {'form': form, 'pdf': pdf})
 
 # TO DO for future
 # def new_chat(request):

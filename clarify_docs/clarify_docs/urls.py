@@ -17,13 +17,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 # from profiles.views import base
-# from views import base
-from profiles.views import base
+# from .views import base
+
 
 
 urlpatterns = [
-    path('', base, name='base'),
     path("admin/", admin.site.urls),
+    path('', include('llm_chat.urls')),
+    path('users/', include('users.urls')),
     path('llm_chat/', include('llm_chat.urls')),
-    path('profiles/', include('profiles.urls')),
 ]
+
