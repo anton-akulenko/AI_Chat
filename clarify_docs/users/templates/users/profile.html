@@ -1,0 +1,170 @@
+{% extends 'llm_chat/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<br>
+<div class="container">
+    <div class="text-center">
+
+        <!-- Повідомлення та помилки -->
+        {% if form.errors %}
+        <div class="alert alert-danger" role="alert">
+            {{form.non_field_errors}}
+            {{form.username.errors}}
+            {{form.password.errors}}
+        </div>
+        {% endif %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}" role="alert">{{ message }}</div>
+        {% endfor %}
+
+        <div class="form-box">
+            <a href="/" class="bg-image-link"></a>
+            <h4 class="titleForm">PROFILE</h4>
+            {% if avatar %}
+            <img src="{{ avatar.image.url }}" alt="User Avatar" height="200"
+                style="border-radius: 20%; border: 1px solid black;">
+
+            {% else %}
+            <img src="https://i.pinimg.com/564x/a5/82/9a/a5829ac0d2b9d70943c41c6f48e5acea.jpg" alt="Placeholder"
+                style="width: 200px; border-radius: 50%; border: 1px solid black;">
+            {% endif %}
+            <form action="{% url 'users:upload_avatar' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <br>
+                <button type="submit" class="btn btn-outline-primary btn-sm">
+                    Add/Change Avatar
+                    <input type="file" name="image" style="display: none;">
+                </button>
+            </form>
+            <br>
+            <form action="{% url 'users:update_user' %}" method="post">
+                {% csrf_token %}
+                <div class="profile-details">
+                    <div class="profile-row table-light">
+                        <span class="profile-value">Username:</span>
+                        <input type="text" name="username" value="{{ user.username }}" class="profile-input" />
+                    </div>
+                    <div class="profile-row table-light">
+                        <span class="profile-value">First Name:</span>
+                        <input type="text" name="first_name" value="{{ user.first_name }}" class="profile-input" />
+                    </div>
+                    <div class="profile-row table-light">
+                        <span class="profile-value">Last Name:</span>
+                        <input type="text" name="last_name" value="{{ user.last_name }}" class="profile-input" />
+                    </div>
+                    <div class="profile-row table-light">
+                        <span class="profile-value">Email:</span>
+                        <input type="email" name="email" value="{{ user.email }}" class="profile-input" disabled />
+                        <!-- Якщо ви не хочете дозволити зміни email -->
+
+                    </div>
+                    <button type="submit" class="btn btn-outline-primary btn-sm">
+                        Update Profile
+                        <input type="file" name="image" style="display: none;">
+                    </button>
+
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<script>
+    // повідомлення зникає через 5 сек
+    setTimeout(function () {
+        var alerts = document.querySelectorAll(".alert");
+        alerts.forEach(function (alert) {
+            alert.style.display = "none";
+        });
+    }, 5000); // 5000 мілісекунд = 5 секунд
+</script>
+<style>
+    .bg-image-link {
+        display: block;
+        width: 35px;
+        /* Ширина вашого фонового зображення (або те значення, яке вам потрібне) */
+        height: 35px;
+        /* Висота вашого фонового зображення (або те значення, яке вам потрібне) */
+        position: absolute;
+        /* Абсолютне позиціонування відносно .form-box */
+        top: 10px;
+        /* Верхній відступ */
+        right: 10px;
+        /* Лівий відступ */
+        background-image: url("{% static 'llm_chat/img/iconX.png' %}");
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        z-index: 10;
+        /* Переконайтеся, що цей елемент завжди знаходиться зверху */
+    }
+
+    .form-box {
+        position: relative;
+        width: 400px;
+        margin: 0 auto;
+        padding: 20px 20px 20px 20px;
+        background-color: rgba(247, 247, 247, 0.9);
+        /* 0.9 - це рівень прозорості */
+        border: 5px solid #ccc;
+        border-radius: 15px;
+    }
+
+    /* Медіа-запит для екранів з максимальною шириною 768px */
+    @media (max-width: 768px) {
+        .form-box {
+            position: relative;
+            width: 90%;
+            /* Зменшуємо ширину до 90% від загальної ширини екрану */
+            padding: 10px;
+            /* Зменшуємо внутрішній відступ */
+        }
+    }
+
+    .profile-details {
+        width: 100%;
+    }
+
+    .profile-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 12px;
+    }
+
+    .profile-label {
+        font-weight: bold;
+    }
+
+    .profile-value {
+        font-weight: normal;
+    }
+
+    .profile-input {
+        border: none;
+        background-color: transparent;
+        outline: none;
+        font-weight: bold;
+    }
+
+    .profile-input:focus {
+        border-bottom: 1px solid black;
+    }
+
+    .modal-body {
+        text-align: left;
+        /* Це правило прибере центрування тексту */
+    }
+
+    .btn-group-container {
+        /* Новий контейнер для вашого блоку кнопок */
+        position: absolute;
+        top: 10px;
+        /* Можна налаштувати за потреби */
+        left: 10px;
+        /* Можна налаштувати за потреби */
+    }
+</style>
+
+{% endblock %}

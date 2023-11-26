@@ -1,0 +1,40 @@
+body, button, input, select, textarea {
+    font-family: 'Montserrat', sans-serif;
+}
+body {
+    background-color: #f8f9fa;
+}
+
+nav {
+    background-color: #f8f9fa;
+    padding: 15px;
+    text-align: center;
+    overflow: hidden;
+}
+
+nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+
+nav ul li.logout a {
+    color: #2ecc71; /* Color of Logout link text */
+}
+
+nav ul li.logout a:hover {
+    color: #fff; /* Text color on hover for Logout link */
+}
+
+nav ul li.logo a.no-style {
+    text-decoration: none;
+    color:  #2c3e50;
+    background-color: transparent;
+    transition: none;
+}
+
+nav ul li.logo a.no-style:hover {
+    background-color: transparent;
+    color:  #2c3e50;
+}

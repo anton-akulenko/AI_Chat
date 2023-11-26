@@ -1,0 +1,469 @@
+{% extends 'assistant/base.html' %}
+{% block title %} Home {% endblock %}
+{% block content %}
+  <meta charset="UTF-8">
+  <title>Chat Application</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    #container {
+      width: 80%;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      height: 100%;
+    }
+
+    #sidebar {
+      width: 250px;
+      height: 100%;
+      background-color: #007bff;
+      color: #fff;
+      padding: 20px;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+
+    #sidebar h1 {
+      margin-top: 0;
+    }
+
+    #file-upload {
+      border: 2px dashed #ccc;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+
+    #uploaded-files {
+      margin-bottom: 20px;
+    }
+
+    #chat-container {
+      flex: 1;
+      padding: 20px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      height: 100%;
+    }
+
+    #chat-history {
+      border: 1px solid #ccc;
+      min-height: 300px;
+      overflow-y: scroll;
+      padding: 10px;
+      margin-top: 50px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+
+/*      width: 100%;*/
+      height: 100%;
+    }
+
+    #message-input-container {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      max-width: 100%;
+      margin-top: auto;
+    }
+
+    #message-input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-right: 10px;
+      font-size: 16px;
+      width: 100%;
+    }
+
+    #send-button {
+      padding: 10px;
+      border: none;
+      background: #007bff;
+      color: #fff;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+
+    #process-button {
+    padding: 5px;
+    border-color: #fff;
+    background: #007bff;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    }
+
+    #send-button:hover {
+      background: #0056b3;
+    }
+
+    .file-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-bottom: 5px;
+    }
+
+    .file-item span {
+      margin-right: 10px;
+    }
+
+    .remove-file {
+      cursor: pointer;
+      color: red;
+    }
+  </style>
+{% with selected_pdf_id=request.POST.selected_pdf|default:"" %}
+
+  <div id="container">
+    <div id="sidebar">
+      <h1>Chat App</h1>
+      <form method="post" enctype="multipart/form-data" action="{% url 'upload_pdf' %}" id="uploadForm">
+          <!-- File upload area inside sidebar for drag and drop -->
+          {% csrf_token %}
+          <div id="file-upload" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="fileInput.click()">
+            <p>Drag and drop files here</p>
+            <input type="file" name="{{ form.pdf_document.name }}" id="{{ form.pdf_document.auto_id }}" onchange="submitForm();" style="display: none;">
+            <input type="file" name="pdf_document" id="pdfInput">
+            <button id="process-button">Upload PDF</button>
+          </div>
+      </form>
+      <div class="form-group">
+            <label style="color: white; margin: 20px;" for="sidenav_selected_pdf" class="form-label mt-4">Choose your document:</label>
+            <select style=" margin: 10px; padding:5px;" class="form-select" id="sidenav_selected_pdf">
+                {% for pdf in user_pdfs %}
+                <option value="{{ pdf.id }}"
+                        {% if pdf.id|stringformat:"s" == selected_pdf_id %}
+                selected{% endif %}>{{ pdf.title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+      <div id="uploaded-files">
+        <strong>Uploaded Files:</strong>
+        <!-- List of uploaded files will be displayed here -->
+        {% for pdf in user_pdfs %}
+          <ul style="list-style-type: none; margin-left: -25px">
+              <li style="color: white; white-space: normal; ">{{ pdf.title }}</li>
+          </ul>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div id="chat-container">
+      <div id="chat-history">
+        <!-- Chat history will be displayed here -->
+        <!-- Example message -->
+<!--        <div><strong>User:</strong> Hello!</div>-->
+<!--        <div><strong>You:</strong> Hi there!</div>-->
+                <ul>
+                    {% for message in chat_message %}
+                    <li>
+                        <div class="text-center">
+                            <p>{{ message.timestamp }}</p>
+                        </div>
+                        <div class="container user">
+                            {% if avatar_url %}
+                            <img src="{{ avatar_url }}" alt="Avatar">
+                            {% else %}
+                            <img src="{% static 'llm_chat/img/human.png' %}"
+                                 alt="Avatar">
+                            {% endif %}
+                            <p>{{ message.message }}</p>
+                        </div>
+                        <div class="container darker">
+                            <img src="{% static 'llm_chat/img/bot.png' %}" alt="Avatar" class="right">
+                            <p>{{ message.answer }}</p>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+        <!-- More chat history will be appended dynamically -->
+      </div>
+
+      <div id="message-input-container" style="width: 100%; max-width: 100%;">
+
+                        <form action="{% url 'ask_question' %}" method="post" id="questionForm">
+                            {% csrf_token %}
+                            <input type="hidden" name="selected_pdf" id="main_selected_pdf">
+
+                                    <button class="btn" type="submit">Submit</button>
+<!--                                    <button id="send-button" onclick="sendMessage()">-->
+                                <input type="text" id="textInput" name="user_question" placeholder="Type a message...">
+<!--change css style for id="textInput" -->
+                        </form>
+        <!-- Text input area -->
+<!--        <input type="text" id="message-input" placeholder="Type a message...">-->
+<!--        <button id="send-button" onclick="sendMessage()">-->
+          Send
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript code for handling file uploads, sending messages, etc. -->
+  <script>
+        function submitForm() {
+    // Створюємо новий об'єкт FormData
+    let formData = new FormData(document.getElementById("uploadForm"));
+
+    // Виконуємо запит на сервер
+    fetch('{% url 'upload_pdf' %}', {
+        method: 'POST',
+        body: formData,
+    })
+    .then(response => response.json())  // Перетворюємо відповідь у JSON
+    .then(data => {
+    if (data.error) {
+        // Якщо у відповіді є ключ 'error', покажіть повідомлення користувачеві
+        Swal.fire({
+            icon: 'error',
+            title: 'ERROR',
+            text: data.error,
+        });
+    } else if (data.success) {
+        // Обробляємо успішну відповідь (наприклад, перезавантаження сторінки)
+        location.reload();
+    }
+})
+
+    .catch(error => {
+        console.error('Помилка:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Unknown error.Try again',
+        });
+    });
+}
+
+function triggerFileSelect() {
+    document.getElementById("{{ form.pdf_document.auto_id }}").click();
+}
+
+    function toggleNav() {
+     var sidenav = document.getElementById("mySidenav");
+     if (sidenav.style.width == "0px" || sidenav.style.width == "") {
+         sidenav.style.width = "280px";
+
+         // якщо потрібно щоб елемент змістився як меню вистав px
+         document.getElementById("main").style.marginLeft = "0px";
+     } else {
+         sidenav.style.width = "0";
+         document.getElementById("main").style.marginLeft= "0";
+     }
+ }
+
+    document.getElementById("textInput").addEventListener("focus", function() {
+    var selectedPdfValue = document.getElementById("sidenav_selected_pdf").value;
+    document.getElementById("main_selected_pdf").value = selectedPdfValue;
+});
+
+// форматування часу
+function formatTimestamp(timestampStr) {
+    const timestamp = new Date(timestampStr);
+    const options = {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+    };
+
+    let formatted = new Intl.DateTimeFormat('en-US', options).format(timestamp);
+
+    formatted = formatted.replace(/, (\d{4}),/, ", $1,")
+                         .replace(/:\d{2} /, ' ')
+                         .replace(" AM", " a.m.")
+                         .replace(" PM", " p.m.");
+
+    return formatted;
+}
+
+// виводити історію при виборі файлу
+document.getElementById("sidenav_selected_pdf").addEventListener("change", function() {
+    let selectedPdf = this.value;
+
+    fetch(`/llm_chat/get_chat_history?pdf_id=${selectedPdf}`)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        const chatHistoryList = document.querySelector(".chat-history");
+        chatHistoryList.innerHTML = ""; // Очищуємо поточний список повідомлень
+
+        data.forEach(message => {
+            let formattedTimestamp = formatTimestamp(message.timestamp);
+            let messageItem = `
+                <li>
+                    <div class="text-center">
+                        <p>${formattedTimestamp}</p>
+                    </div>
+                    <div class="container user">
+                        {% if avatar_url %}
+                        <img src="{{ avatar_url }}" alt="Avatar">
+                        {% else %}
+                        <img src="{% static 'llm_chat/img/human.png' %}" alt="Avatar">
+                        {% endif %}
+                        <p>${message.message}</p>
+                    </div>
+                    <div class="container darker">
+                        <img src="{% static 'llm_chat/img/bot.png' %}" alt="Avatar" class="right">
+                        <p>${message.answer}</p>
+                    </div>
+                </li>
+            `;
+            chatHistoryList.innerHTML += messageItem;
+        });
+    })
+    .catch(error => {
+        console.error('There was a problem with the fetch operation:', error.message);
+        // Додайте повідомлення про помилку для користувача, якщо це необхідно.
+        // Наприклад: alert('Sorry, there was a problem loading the chat history.');
+    });
+});
+</script>
+<script>
+    // повідомлення зникає через 5 сек
+    setTimeout(function(){
+        var alerts = document.querySelectorAll(".alert");
+        alerts.forEach(function(alert){
+            alert.style.display = "none";
+        });
+    }, 5000);
+</script>
+<script>
+    document.getElementById("questionForm").addEventListener("submit", function(event) {
+    var textInput = document.getElementById("textInput").value.trim();
+
+    if (!textInput) {
+        event.preventDefault();
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Please enter a message before sending.',
+            confirmButtonColor: '#3085d6',
+        });
+    }
+});
+
+</script>
+<script>
+    // Отримуємо посилання на елемент контейнера
+    var chatHistoryContainer = document.getElementById("chat-history-container");
+    // Прокручуємо контейнер до нижнього краю
+    chatHistoryContainer.scrollTop = chatHistoryContainer.scrollHeight;
+</script>
+
+
+
+
+
+
+
+    function triggerFileSelect() {
+    document.getElementById("{{ form.pdf_document.auto_id }}").click();
+}
+
+    function toggleNav() {
+     var sidenav = document.getElementById("mySidenav");
+     if (sidenav.style.width == "0px" || sidenav.style.width == "") {
+         sidenav.style.width = "280px";
+
+         // якщо потрібно щоб елемент змістився як меню вистав px
+         document.getElementById("main").style.marginLeft = "0px";
+     } else {
+         sidenav.style.width = "0";
+         document.getElementById("main").style.marginLeft= "0";
+     }
+ }
+
+    document.getElementById("textInput").addEventListener("focus", function() {
+    var selectedPdfValue = document.getElementById("sidenav_selected_pdf").value;
+    document.getElementById("main_selected_pdf").value = selectedPdfValue;
+});
+
+
+
+
+
+
+
+
+
+
+
+
+    function allowDrop(ev) {
+      ev.preventDefault();
+    }
+
+    function drop(ev) {
+      ev.preventDefault();
+      var files = ev.dataTransfer.files;
+      var uploadedFiles = document.getElementById('uploaded-files');
+
+      for (var i = 0; i < files.length; i++) {
+        var file = files[i];
+        var fileName = file.name;
+
+        // Create list item for each file
+        var listItem = document.createElement('div');
+        listItem.className = 'file-item';
+
+        // Display file name and remove button
+        listItem.innerHTML = `<span>${fileName}</span><span class="remove-file" onclick="removeFile(this)">X</span>`;
+
+        // Append file item to the list
+        uploadedFiles.appendChild(listItem);
+      }
+    }
+
+    function removeFile(element) {
+      element.parentElement.remove();
+    }
+
+    function sendMessage() {
+      var messageInput = document.getElementById('message-input').value;
+      console.log('Message:', messageInput);
+
+      var chatHistory = document.getElementById('chat-history');
+      var div = document.createElement('div');
+      div.textContent = messageInput;
+      chatHistory.appendChild(div);
+
+      // Scroll to the bottom of the chat history
+      chatHistory.scrollTop = chatHistory.scrollHeight;
+
+      document.getElementById('message-input').value = '';
+    }
+  </script>
+
+{% endblock %}

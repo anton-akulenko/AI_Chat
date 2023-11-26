@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "clarify-docs"
+version = "0.1.0"
+description = ""
+authors = ["Artur Mistiuk <mistiuk.artur@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+django = "^4.2.7"
+openai = "^1.3.0"
+pypdf2 = "^3.0.1"
+langchain = "^0.0.336"
+python-dotenv = "^1.0.0"
+docx2txt = "^0.8"
+python-pptx = "^0.6.23"
+tiktoken = "^0.5.1"
+faiss-cpu = "^1.7.4"
+gunicorn = "^21.2.0"
+django-heroku = "^0.3.1"
+instructorembedding = "^1.0.1"
+sentence-transformers = "^2.2.2"
+cloudinary = "^1.36.0"
+django-cors-headers = "^4.3.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

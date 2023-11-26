@@ -1,0 +1,46 @@
+{% extends 'llm_chat/base.html' %}
+
+{% block content %}
+
+<br>
+<h4 class="text-center"><b>User Statistic</b></h4>
+<table class="table table-hover" id="userTable">
+    <thead>
+        <tr class="table-info">
+
+            <th>Username</th>
+            <th>First name</th>
+            <th>Last name</th>
+
+            <th>Date Joined</th>
+            <th>Last Login</th>
+            <th> Duration</th>
+
+            <th>Total Files Uploaded</th>
+            <th>Total Questions Asked</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        <tr class="table-light">
+
+            <td>{{ user.username }}</td>
+            <td>{{ user.first_name }}</td>
+            <td>{{ user.last_name }}</td>
+
+
+            <td>{{ user.date_joined }}</td>
+            <td>{{ user.last_login }}</td>
+            <td>{{ time_joined }}</td>
+
+            <td>{{ user_data.total_files_uploaded }}</td>
+            <td>{{ user_data.total_questions_asked }}</td>
+        </tr>
+
+    </tbody>
+</table>
+
+
+
+
+{% endblock %}

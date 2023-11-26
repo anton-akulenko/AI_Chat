@@ -1,0 +1,87 @@
+{% extends 'llm_chat/base.html' %}
+
+{% load static %}
+{% block content %}
+
+<div class="container">
+    <br>
+    <div class="text-center">
+        <!-- Повідомлення та помилки -->
+        {% if form.errors %}
+        <div class="alert alert-danger" role="alert">
+            <strong>Error:</strong> Please correct the following errors:
+            <ul>
+                {{form.email.errors.as_ul}}
+                {{form.username.errors.as_ul}}
+                {{form.password.errors.as_ul}}
+            </ul>
+        </div>
+        {% endif %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}" role="alert">{{ message }}</div>
+        {% endfor %}
+        <div class="form-box">
+            <a href="/" class="bg-image-link"></a>
+            <h4 class="titleForm">LOGIN</h4>
+
+            <form action="{% url 'users:login' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <br>
+                <div class="form-group">
+                    <input class="form-control" type="text" name="username" placeholder="Username">
+                </div>
+                <br>
+                <div class="form-group">
+                    <input class="form-control" type="password" name="password" placeholder="Password">
+                </div>
+                <br>
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="reset" class="btn btn-secondary">Reset</button>
+                <br>
+                <div class="mt-2.5">
+                    <span>Don't have an account?</span>
+                    <a href="/users/signup">Sign up</a>
+                </div>
+                <br>
+
+                <br>
+                <div class="small text-right forgot-password">
+                    <a href="{% url 'users:password_reset' %}" class="text-center"><i>Forgot Password?</i></a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<br>
+
+<script>
+    // повідомлення зникає через 5 сек
+    setTimeout(function () {
+        var alerts = document.querySelectorAll(".alert");
+        alerts.forEach(function (alert) {
+            alert.style.display = "none";
+        });
+    }, 5000);
+
+
+</script>
+
+<style>
+    .form-box {
+        position: relative;
+        width: 400px;
+        margin: 0 auto;
+        padding: 20px 20px 60px 20px;
+        background-color: rgba(247, 247, 247, 0.9);
+        border: 5px solid #ccc;
+        border-radius: 15px;
+    }
+
+    .forgot-password {
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
+    }
+</style>
+
+{% endblock %}
