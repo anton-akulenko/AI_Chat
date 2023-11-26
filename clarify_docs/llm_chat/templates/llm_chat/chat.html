@@ -8,24 +8,15 @@
 <link rel="stylesheet" href="{% static 'llm_chat/styles.css' %}">
 <title>Clarify DOCs</title>
 
-<!--    SWAL custom styles-->
 
 
-<!--    <div class="header">-->
-<!--        <h1>Clarify DOCs</h1>-->
-<!--    </div>-->
-
-
-<!-- Start chat page here  -->
-<!-- <link rel="stylesheet" type="text/css" href="{% static 'llm_chat/base.css' %}"> -->
-{% with selected_pdf_id=request.POST.selected_pdf|default:"" %}
 
 <div id="mySidenav" class="sidebar">
 
     <!-- Upload files -->
 
     <!--      <label for="uploadForm">Upload files:</label>-->
-    <form method="post" enctype="multipart/form-data" action="{% url 'llm_chat:upload_pdf' %}" id="uploadForm">
+    <form method="post" enctype="multipart/form-data" action="{% url 'upload_pdf' %}" id="uploadForm">
         {% csrf_token %}
         <!-- Невидимий input для завантаження файлу -->
         <input type="file" name="{{ form.pdf_document.name }}" id="{{ form.pdf_document.auto_id }}"
@@ -43,11 +34,11 @@
     <!-- Selecting active doc  -->
     <label for="sidenav_selected_pdf">Select file:</label>
     <select id="sidenav_selected_pdf">
-        {% for pdf in user_pdfs %}
-        <option style="overflow-wrap: break-word;" value="{{ pdf.id }}" {% if pdf.id|stringformat:'s'==selected_pdf_id
-            %} selected {% endif %}>{{ pdf.title }}
-        </option>
-        {% endfor %}
+                {% for pdf in user_pdfs %}
+                <option value="{{ pdf.id }}"
+                        {% if pdf.id|stringformat:"s" == selected_pdf_id %}
+                selected{% endif %}>{{ pdf.title }}</option>
+                {% endfor %}
     </select>
 
     <!-- Selecting ends -->
@@ -66,8 +57,7 @@
     border-radius: 5px;
     margin-bottom: 5px;">
             {% for pdf in user_pdfs %}
-            <span style="overflow-wrap: break-word; border-bottom: 1px solid #ccc; padding-bottom: 4px;">{{ pdf.title
-                }}</span>
+            <span style="overflow-wrap: break-word; border-bottom: 1px solid #ccc; padding-bottom: 4px;">{{ pdf.title }}</span>
 
             {% endfor %}
         </div>
@@ -86,8 +76,8 @@
                 <p>{{ message.timestamp }}</p>
             </div>
             <div class="message sent">
-                {% if avatar_url %}
-                <img src="{{ avatar_url }}" alt="Avatar">
+                {% if avatar %}
+                <img src="{{ avatar.image.url }}" alt="Avatar">
                 {% else %}
                 <img src="{% static 'llm_chat/img/human.png' %}" alt="Avatar">
                 {% endif %}
@@ -103,18 +93,15 @@
             <!-- End messages -->
         </div> <!--chat-history cont-->
     </div>
-    <div class="input-area">
+    <div >
 
-        <form action="{% url 'llm_chat:ask_question' %}" method="post" id="questionForm">
+        <form action="{% url 'ask_question' %}" method="post" id="questionForm">
             {% csrf_token %}
             <input type="hidden" name="selected_pdf" id="main_selected_pdf">
-            <div>
-                <!--                    <div>-->
-                <!--                        <button class="btn" type="submit">Send</button>-->
-                <!--                    </div>-->
-                <input style="min-width: 690px;" class="form-control" type="text" id="textInput" name="user_question"
+            <div style="flex: 1; display: flex;">
+                <input style="flex: 1; min-width: 0; margin-right: 5px;" class="form-control" type="text" id="textInput" name="user_question"
                     placeholder="Type your question here...">
-                <button style="float: inline-start;" type="submit">Send</button>
+                <button style="flex-shrink: 0;" type="submit" class="btn btn-primary">Send</button>
             </div>
         </form>
 
@@ -134,7 +121,7 @@
         let formData = new FormData(document.getElementById("uploadForm"));
 
         // Виконуємо запит на сервер
-        fetch('{% url 'llm_chat: upload_pdf' %}', {
+        fetch('{% url 'upload_pdf' %}', {
             method: 'POST',
             body: formData,
         })
@@ -233,8 +220,8 @@
                         <p>${formattedTimestamp}</p>
                     </div>
                     <div class="message sent">
-                        {% if avatar_url %}
-                        <img src="{{ avatar_url }}" alt="Avatar">
+                        {% if avatar %}
+                        <img src="{{ avatar.image.url }}" alt="Avatar">
                         {% else %}
                         <img src="{% static 'llm_chat/img/human.png' %}" alt="Avatar">
                         {% endif %}
@@ -286,12 +273,12 @@
 
 
     // Отримуємо посилання на елемент контейнера
-    var chatHistoryContainer = document.getElementById("chat-history");
+    var chatHistoryContainer = document.getElementById("chat-history-container");
     // Прокручуємо контейнер до нижнього краю
     chatHistoryContainer.scrollTop = chatHistoryContainer.scrollHeight;
 </script>
 
-{% endwith %}
+
 
 {% endblock %}
 
