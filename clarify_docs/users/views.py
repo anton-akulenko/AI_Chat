@@ -5,6 +5,7 @@ from django.contrib.auth.views import PasswordResetView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from cloudinary.exceptions import Error as CloudinaryError
+from django.utils import timezone
 
 from .forms import RegisterForm, AvatarForm, UpdateUserForm
 from .models import Avatar
@@ -125,12 +126,13 @@ def profile(request):
 
     user = request.user
     user_id = request.user.id
-    user_plan = UserData.objects.get(user=user)
+    # user_plan = UserData.objects.get(user=user)
     avatar = Avatar.objects.filter(user_id=user_id).first()
     return render(request, 'users/profile.html',
                   context={'users': user,
                            'avatar': avatar,
-                           'user_plan': user_plan})
+                        #    'user_plan': user_plan
+                           })
 
 
 @login_required
@@ -187,18 +189,28 @@ def signup_redirect(request):
 
 
 def user_statistic(request):
-
+    current_time = timezone.now()
     user = request.user
-    user_data = UserData.objects.get(user=user)
+    avatar = Avatar.objects.filter(user_id=user.id).first()
+    time_joined = current_time - user.date_joined
+    time_joined = format_duration(time_joined)
     # max_questions_allowed = user_data.max_questions_allowed_for_plan()
     # max_files_allowed = user_data.max_files_allowed_for_plan()
     # width_questions = user_data.total_questions_asked / max_questions_allowed * 100
     # width_files = user_data.total_files_uploaded / max_files_allowed * 100
     return render(request, 'users/user_statistic.html',
                   context={'user': user,
-                           'user_data': user_data,
+                           'avatar': avatar,
+                           "time_joined": time_joined
                         #    "max_questions": max_questions_allowed,
                         #    "max_files": max_files_allowed,
                         #    "width_questions": width_questions,
                         #    "width_files": width_files,
                            })
+
+
+def format_duration(duration):
+
+    days = duration.days
+    hours = duration.seconds // 3600
+    return f"{days} days, {hours} hours"

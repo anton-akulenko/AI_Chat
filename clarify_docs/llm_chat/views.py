@@ -19,7 +19,7 @@ from pptx import Presentation
 
 from .forms import PDFUploadForm, PDFUpdateForm, PDFDocumentForm2
 from .models import ChatMessage, PDFDocument, UserData
-
+from users.models import Avatar
 # CHUNK_SIZE = 1024
 # CHUNK_OVERLAP = 200
 # MAX_LEN = 512
@@ -30,8 +30,9 @@ load_dotenv()
 
 
 def main(request):
-    # avatar = Avatar.objects.filter(user_id=request.user.id).first()
-    return render(request, 'llm_chat/index.html', context={})  # home.html
+    avatar = Avatar.objects.filter(user_id=request.user.id).first()
+
+    return render(request, 'llm_chat/index.html', context={'avatar': avatar,})  # home.html
 
 
 def get_pdf_text(file):
@@ -93,8 +94,9 @@ def get_conversation_chain(vectorstore):
 
 @login_required(login_url="/login/")
 def upload_pdf(request):
+    
     user = request.user
-
+    avatar = Avatar.objects.filter(user_id=user.id).first()
     try:
         user_data = UserData.objects.get(user=user)
     except UserData.DoesNotExist:
@@ -128,13 +130,13 @@ def upload_pdf(request):
     user_pdfs = PDFDocument.objects.filter(user=request.user)
     # not needed for now
     chat_message = ChatMessage.objects.all()
-    return render(request, 'llm_chat/chat.html', {'form': form, 'user_pdfs': user_pdfs})
+    return render(request, 'llm_chat/chat.html', {'form': form, 'user_pdfs': user_pdfs, 'avatar': avatar})
 
 
 @login_required(login_url="/login/")
 def ask_question(request):
     user = request.user
-
+    avatar = Avatar.objects.filter(user_id=user.id).first()
     try:
         user_data = UserData.objects.get(user=user)
     except UserData.DoesNotExist:
@@ -170,7 +172,7 @@ def ask_question(request):
     chat_message = ChatMessage.objects.filter(user=request.user, pdf_document=selected_pdf).order_by('timestamp')
 
     context = {'chat_response': chat_response, 'chat_history': chat_history, 'user_question': user_question,
-               'user_pdfs': user_pdfs, 'chat_message': chat_message}
+               'user_pdfs': user_pdfs, 'chat_message': chat_message, 'avatar': avatar}
 
     return render(request, 'llm_chat/chat.html', context)
 

@@ -43,10 +43,6 @@
                     <a href="/users/signup">Sign up</a>
                 </div>
                 <br>
-                <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" width="32"
-                    height="32"><i> Continue with Google </i>
-                </a>
-
 
                 <br>
                 <div class="small text-right forgot-password">
@@ -71,20 +67,6 @@
 </script>
 
 <style>
-    .bg-image-link {
-        display: block;
-        width: 35px;
-        height: 35px;
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background-image: url("{% static 'llm_chat/img/iconX.png' %}");
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-position: center;
-        z-index: 10;
-    }
-
     .form-box {
         position: relative;
         width: 400px;
@@ -95,26 +77,10 @@
         border-radius: 15px;
     }
 
-    .google-login {
-        margin-left: 12px;
-        border: 1px solid #cccccc;
-        padding: 5px;
-        display: inline-block;
-        border-radius: 5px;
-        text-decoration: none;
-    }
-
     .forgot-password {
         position: absolute;
         right: 10px;
         bottom: 10px;
-    }
-
-    @media (max-width: 768px) {
-        .form-box {
-            width: 90%;
-            padding: 10px;
-        }
     }
 </style>
 

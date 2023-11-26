@@ -3,11 +3,11 @@ from django.urls import path
 
 from . import views
 
-app_name = 'llm_chat'
+
 
 from . import views
 
-
+# app_name = 'llm_chat'
 
 urlpatterns = [
     path('', views.main, name='home'),

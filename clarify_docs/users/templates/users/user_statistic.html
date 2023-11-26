@@ -2,62 +2,45 @@
 
 {% block content %}
 
-<div class="container h-100">
-    <div class="row d-flex justify-content-center align-items-center h-100">
-        <div class="col-md-4 text-center">
-            <a href="{% url 'users:user_plan_subscription' %}" class="btn btn-primary btn-lg" role="button">Upgrade
-                plan</a>
-        </div>
-    </div>
+<br>
+<h4 class="text-center"><b>User Statistic</b></h4>
+<table class="table table-hover" id="userTable">
+    <thead>
+        <tr class="table-dark">
 
-    <div class="row">
-        <br>
-        <div class="col-md-2"></div>
-        <div class="col-md-8">
-            <h4>Files:</h4>
-            <div class="progress">
-                <div class="progress-bar bg-info progress-bar-striped progress-bar-animated"
-                    style="width: {{ width_files }}%">
-                    <span class="file-progress-text">{{ user_data.total_files_uploaded }} / {{ max_files }}</span>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-2"></div>
-    </div>
+            <th>Username</th>
+            <th>First name</th>
+            <th>Last name</th>
 
-    <br>
-    <div class="row">
-        <br>
-        <div class="col-md-2"></div>
-        <div class="col-md-8">
-            <h4>Questions:</h4>
-            <div class="progress">
-                <div class="progress-bar bg-success progress-bar-striped progress-bar-animated"
-                    style="width: {{ width_questions }}%">
-                    <span class="question-progress-text">{{ user_data.total_questions_asked }} / {{ max_questions
-                        }}</span>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-2"></div>
-    </div>
+            <th>Date Joined</th>
+            <th>Last Login</th>
+            <th> Duration</th>
 
-</div>
+            <th>Total Files Uploaded</th>
+            <th>Total Questions Asked</th>
+        </tr>
+    </thead>
+    <tbody>
 
-<style>
-    .progress {
-        height: 50px;
-        background-color: #d7d7d7;
-        text-align: center;
-    }
+        <tr class="table-info">
 
-    .file-progress-text,
-    .question-progress-text {
-        color: #000;
-        /* Black color for the text */
-        line-height: 50px;
-        /* Make the text vertically centered */
-    }
-</style>
+            <td>{{ user.username }}</td>
+            <td>{{ user.first_name }}</td>
+            <td>{{ user.last_name }}</td>
+
+
+            <td>{{ user.date_joined }}</td>
+            <td>{{ user.last_login }}</td>
+            <td>{{ time_joined }}</td>
+
+            <td>{{ user_data.total_files_uploaded }}</td>
+            <td>{{ user_data.total_questions_asked }}</td>
+        </tr>
+
+    </tbody>
+</table>
+
+
+
 
 {% endblock %}
