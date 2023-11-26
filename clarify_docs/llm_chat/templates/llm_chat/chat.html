@@ -1,7 +1,300 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
 {% extends 'llm_chat/base.html' %}
+
 {% load static %}
 {% block content %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<link rel="stylesheet" href="{% static 'llm_chat/styles.css' %}">
+<title>Clarify DOCs</title>
 
-<h2> Send me back </h2>
+<!--    SWAL custom styles-->
 
-{% endblock%}
+
+<!--    <div class="header">-->
+<!--        <h1>Clarify DOCs</h1>-->
+<!--    </div>-->
+
+
+<!-- Start chat page here  -->
+<!-- <link rel="stylesheet" type="text/css" href="{% static 'llm_chat/base.css' %}"> -->
+{% with selected_pdf_id=request.POST.selected_pdf|default:"" %}
+
+<div id="mySidenav" class="sidebar">
+
+    <!-- Upload files -->
+
+    <!--      <label for="uploadForm">Upload files:</label>-->
+    <form method="post" enctype="multipart/form-data" action="{% url 'llm_chat:upload_pdf' %}" id="uploadForm">
+        {% csrf_token %}
+        <!-- Невидимий input для завантаження файлу -->
+        <input type="file" name="{{ form.pdf_document.name }}" id="{{ form.pdf_document.auto_id }}"
+            onchange="submitForm();" style="display: none;">
+        <!-- Зображення-кнопка -->
+        <img src="{% static 'llm_chat/img/upload_file.png' %}" height="50" alt="Upload Image" id="uploadImage"
+            onclick="triggerFileSelect();" style="cursor: pointer; padding: 20px">
+        <button type="submit">Upload files</button>
+    </form>
+
+
+    <!--         <button>Upload</button>
+        <button>Process Files</button> -->
+
+    <!-- Selecting active doc  -->
+    <label for="sidenav_selected_pdf">Select file:</label>
+    <select id="sidenav_selected_pdf">
+        {% for pdf in user_pdfs %}
+        <option style="overflow-wrap: break-word;" value="{{ pdf.id }}" {% if pdf.id|stringformat:'s'==selected_pdf_id
+            %} selected {% endif %}>{{ pdf.title }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <!-- Selecting ends -->
+
+
+
+    <!-- Upload ends -->
+    <div style="padding-top: 10px; padding-bottom: 10px;">
+        <strong>Uploaded Files:</strong>
+        <div style="display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    flex-direction: column;
+    padding: 10px;
+    border: 1px dashed #ccc;
+    border-radius: 5px;
+    margin-bottom: 5px;">
+            {% for pdf in user_pdfs %}
+            <span style="overflow-wrap: break-word; border-bottom: 1px solid #ccc; padding-bottom: 4px;">{{ pdf.title
+                }}</span>
+
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="chat-container">
+    <div class="chat-history-container" id="chat-history-container">
+
+        <div class="chat-history">
+
+            <!-- Messages -->
+            {% for message in chat_message %}
+
+            <div class="text-center">
+                <p>{{ message.timestamp }}</p>
+            </div>
+            <div class="message sent">
+                {% if avatar_url %}
+                <img src="{{ avatar_url }}" alt="Avatar">
+                {% else %}
+                <img src="{% static 'llm_chat/img/human.png' %}" alt="Avatar">
+                {% endif %}
+                <p>{{ message.message }}</p>
+            </div>
+            <div class="message received">
+                <img src="{% static 'llm_chat/img/bot.png' %}" alt="Avatar" class="right">
+                <p>{{ message.answer }}</p>
+            </div>
+
+            {% endfor %}
+
+            <!-- End messages -->
+        </div> <!--chat-history cont-->
+    </div>
+    <div class="input-area">
+
+        <form action="{% url 'llm_chat:ask_question' %}" method="post" id="questionForm">
+            {% csrf_token %}
+            <input type="hidden" name="selected_pdf" id="main_selected_pdf">
+            <div>
+                <!--                    <div>-->
+                <!--                        <button class="btn" type="submit">Send</button>-->
+                <!--                    </div>-->
+                <input style="min-width: 690px;" class="form-control" type="text" id="textInput" name="user_question"
+                    placeholder="Type your question here...">
+                <button style="float: inline-start;" type="submit">Send</button>
+            </div>
+        </form>
+
+
+        <!--             <input type="text" placeholder="Type your message...">
+            <button>Send</button> -->
+    </div>
+</div>
+</div>
+
+
+<!-- END chat page -->
+
+<script>
+    function submitForm() {
+        // Створюємо новий об'єкт FormData
+        let formData = new FormData(document.getElementById("uploadForm"));
+
+        // Виконуємо запит на сервер
+        fetch('{% url 'llm_chat: upload_pdf' %}', {
+            method: 'POST',
+            body: formData,
+        })
+            .then(response => response.json())  // Перетворюємо відповідь у JSON
+            .then(data => {
+                if (data.error) {
+                    // Якщо у відповіді є ключ 'error', покажіть повідомлення користувачеві
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'ERROR',
+                        text: data.error,
+                    });
+                } else if (data.success) {
+                    // Обробляємо успішну відповідь (наприклад, перезавантаження сторінки)
+                    location.reload();
+                }
+            })
+
+            .catch(error => {
+                console.error('Помилка:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Unknown error.Try again',
+                });
+            });
+    }
+
+
+
+    function triggerFileSelect() {
+        document.getElementById("{{ form.pdf_document.auto_id }}").click();
+    }
+
+    function toggleNav() {
+        var sidenav = document.getElementById("mySidenav");
+        if (sidenav.style.width == "0px" || sidenav.style.width == "") {
+            sidenav.style.width = "250px";
+
+            // якщо потрібно щоб елемент змістився як меню вистав px
+            document.getElementById("main").style.marginLeft = "0px";
+        } else {
+            sidenav.style.width = "0";
+            document.getElementById("main").style.marginLeft = "0";
+        }
+    }
+
+    document.getElementById("textInput").addEventListener("focus", function () {
+        var selectedPdfValue = document.getElementById("sidenav_selected_pdf").value;
+        document.getElementById("main_selected_pdf").value = selectedPdfValue;
+    });
+
+    // форматування часу
+    function formatTimestamp(timestampStr) {
+        const timestamp = new Date(timestampStr);
+        const options = {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour24: true
+
+        };
+
+        let formatted = new Intl.DateTimeFormat('en-US', options).format(timestamp);
+
+        formatted = formatted.replace(/, (\d{4}),/, ", $1,")
+            .replace(/:\d{2} /, ' ')
+            .replace(" AM", " a.m.")
+            .replace(" PM", " p.m.");
+
+        return formatted;
+    }
+
+    // виводити історію при виборі файлу
+    document.getElementById("sidenav_selected_pdf").addEventListener("change", function () {
+        let selectedPdf = this.value;
+
+        fetch(`/llm_chat/get_chat_history?pdf_id=${selectedPdf}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const chatHistoryList = document.querySelector(".chat-history");
+                chatHistoryList.innerHTML = ""; // Очищуємо поточний список повідомлень
+
+                data.forEach(message => {
+                    let formattedTimestamp = formatTimestamp(message.timestamp);
+                    let messageItem = `
+                    <div class="text-center">
+                        <p>${formattedTimestamp}</p>
+                    </div>
+                    <div class="message sent">
+                        {% if avatar_url %}
+                        <img src="{{ avatar_url }}" alt="Avatar">
+                        {% else %}
+                        <img src="{% static 'llm_chat/img/human.png' %}" alt="Avatar">
+                        {% endif %}
+                        <p>${message.message}</p>
+                    </div>
+                    <div class="message received">
+                        <img src="{% static 'llm_chat/img/bot.png' %}" alt="Avatar" class="right">
+                        <p>${message.answer}</p>
+                    </div>
+            `;
+                    chatHistoryList.innerHTML += messageItem;
+                });
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error.message);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Loading failed',
+                    text: 'Sorry, there was a problem loading the chat history.',
+
+                });
+                // Додайте повідомлення про помилку для користувача, якщо це необхідно.
+                // Наприклад: alert('Sorry, there was a problem loading the chat history.');
+            });
+    });
+
+
+    // повідомлення зникає через 5 сек
+    setTimeout(function () {
+        var alerts = document.querySelectorAll(".alert");
+        alerts.forEach(function (alert) {
+            alert.style.display = "none";
+        });
+    }, 5000);
+
+    document.getElementById("questionForm").addEventListener("submit", function (event) {
+        var textInput = document.getElementById("textInput").value.trim();
+
+        if (!textInput) {
+            event.preventDefault();
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Please enter a message before sending.',
+                confirmButtonColor: '#3085d6',
+            });
+        }
+    });
+
+
+    // Отримуємо посилання на елемент контейнера
+    var chatHistoryContainer = document.getElementById("chat-history");
+    // Прокручуємо контейнер до нижнього краю
+    chatHistoryContainer.scrollTop = chatHistoryContainer.scrollHeight;
+</script>
+
+{% endwith %}
+
+{% endblock %}
+
+
+
+<!--</html>-->
