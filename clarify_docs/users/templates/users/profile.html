@@ -60,6 +60,10 @@
                         <!-- Якщо ви не хочете дозволити зміни email -->
 
                     </div>
+                    <a href="{% url 'users:password_reset' %}" class="text-center"><span class="badge rounded-pill bg-warning">Reset password</span></a>
+
+                    <br>
+                    <br>
                     <button type="submit" class="btn btn-outline-primary btn-sm">
                         Update Profile
                         <input type="file" name="image" style="display: none;">

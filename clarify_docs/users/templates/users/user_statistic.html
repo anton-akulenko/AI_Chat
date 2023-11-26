@@ -16,8 +16,10 @@
             <th>Last Login</th>
             <th> Duration</th>
 
-            <th>Total Files Uploaded</th>
-            <th>Total Questions Asked</th>
+            <th>Files Uploaded</th>
+            <th>Questions Asked</th>
+            <th>Total Tokens</th>
+            <th>Total Costs, USD</th>
         </tr>
     </thead>
     <tbody>
@@ -35,6 +37,8 @@
 
             <td>{{ user_data.total_files_uploaded }}</td>
             <td>{{ user_data.total_questions_asked }}</td>
+            <td>{{ user_data.total_tokens }}</td>
+            <td>{{ user_data.total_cost }}</td>
         </tr>
 
     </tbody>

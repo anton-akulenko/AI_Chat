@@ -38,6 +38,8 @@ class ChatMessage(models.Model):
     # question = models.TextField()
     answer = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
+    tokens = models.FloatField(default=0)
+    cost = models.FloatField(default=0)
 
     def __str__(self):
         return f"{self.user.username} at {self.timestamp}: Q: {self.question}, A: {self.answer}"
@@ -50,6 +52,8 @@ class UserData(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     total_files_uploaded = models.IntegerField(default=0)
     total_questions_asked = models.IntegerField(default=0)
+    total_tokens = models.FloatField(default=0)
+    total_cost = models.FloatField(default=0)
 
     class Meta:
         app_label = 'llm_chat'

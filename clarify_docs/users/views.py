@@ -74,12 +74,12 @@ class RegisterView(View):
             # Get current site domain
             # !!!!!!!!!!!!!!! додати домен !!!!!!!!!!!!!!!!!!!
             # domain = get_current_site(request).domain
-
+            domain = "127.0.0.1:8000"
             # Prepare email text
             mail_subject = 'Activate your account'
             message = render_to_string('users/account_activation_email.html', {
                 'user': user,
-                'domain': "127.0.0.1",
+                'domain': domain,
                 'uid': uid,
                 'token': token,
             })
@@ -191,10 +191,14 @@ def signup_redirect(request):
 def user_statistic(request):
     current_time = timezone.now()
     user = request.user
+    try:
+        user_data = UserData.objects.get(user=user.id)
+    except UserData.DoesNotExist:
+        user_data = None
     avatar = Avatar.objects.filter(user_id=user.id).first()
     time_joined = current_time - user.date_joined
     time_joined = format_duration(time_joined)
-    user_data = UserData.objects.get(user=user.id)
+
     # max_questions_allowed = user_data.max_questions_allowed_for_plan()
     # max_files_allowed = user_data.max_files_allowed_for_plan()
     # width_questions = user_data.total_questions_asked / max_questions_allowed * 100
