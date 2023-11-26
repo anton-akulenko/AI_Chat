@@ -194,6 +194,7 @@ def user_statistic(request):
     avatar = Avatar.objects.filter(user_id=user.id).first()
     time_joined = current_time - user.date_joined
     time_joined = format_duration(time_joined)
+    user_data = UserData.objects.get(user=user.id)
     # max_questions_allowed = user_data.max_questions_allowed_for_plan()
     # max_files_allowed = user_data.max_files_allowed_for_plan()
     # width_questions = user_data.total_questions_asked / max_questions_allowed * 100
@@ -201,7 +202,8 @@ def user_statistic(request):
     return render(request, 'users/user_statistic.html',
                   context={'user': user,
                            'avatar': avatar,
-                           "time_joined": time_joined
+                           "time_joined": time_joined,
+                           'user_data': user_data,
                         #    "max_questions": max_questions_allowed,
                         #    "max_files": max_files_allowed,
                         #    "width_questions": width_questions,

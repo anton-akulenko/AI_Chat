@@ -24,7 +24,7 @@
     <div class="container-fluid">
         <div class="navbar-header">
             <a class="navbar-brand" href="/">
-                <img src="{% static 'llm_chat/img/logo_transp.png' %}" height="50" alt="logo">
+                <img src="{% static 'llm_chat/img/logo_transp.png' %}" height="60px" width="60px" alt="logo">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,7 +60,7 @@
                 </li> -->
                 <li class="nav-item">
                     <a class="nav-link btn" href="/upload_pdf"
-                        style="display: inline-block; background-color: #FFFFFF;  font-weight: 500; font-size: 18px; border: 1px solid #FF6B0A; color: #2c3e50;">START
+                        style="padding-right: 10px; padding-left: 10px; display: inline-block; background-color: #FFFFFF;  font-weight: 500; font-size: 18px; border: 1px solid #FF6B0A; color: #2c3e50;">START
                         CHAT</a>
                 </li>
 
@@ -91,14 +91,14 @@
                 </li>
                 {% else %}
                 <li class="nav-item">
-                    <a class="btn btn-outline-secondary" href="/users/signup">Sign up</a>
+                    <a class="btn btn-light" href="/users/signup">Sign up</a>
                 </li>
                 <li class="nav-item py-2 py-lg-1 col-12 col-lg-auto">
                     <div class="vr d-none d-lg-flex h-100 mx-lg-2 text-black"></div>
                     <hr class="d-lg-none my-2 text-white-50">
                 </li>
                 <li class="nav-item">
-                    <a class="btn btn-outline-secondary" href="/users/signin">Login</a>
+                    <a class="btn btn-light" href="/users/signin">Login</a>
                 </li>
                 {% endif %}
             </ul>

@@ -10,7 +10,7 @@
 
 
 
-
+{% with selected_pdf_id=request.POST.selected_pdf|default:"" %}
 <div id="mySidenav" class="sidebar">
 
     <!-- Upload files -->
@@ -23,8 +23,8 @@
             onchange="submitForm();" style="display: none;">
         <!-- Зображення-кнопка -->
         <img src="{% static 'llm_chat/img/upload_file.png' %}" height="50" alt="Upload Image" id="uploadImage"
-            onclick="triggerFileSelect();" style="cursor: pointer; padding: 20px">
-        <button type="submit">Upload files</button>
+            onclick="triggerFileSelect();" style="cursor: pointer; margin-top: 10px;">
+        <button type="submit" class="btn btn-outline-primary">Upload files</button>
     </form>
 
 
@@ -35,7 +35,7 @@
     <label for="sidenav_selected_pdf">Select file:</label>
     <select id="sidenav_selected_pdf">
                 {% for pdf in user_pdfs %}
-                <option value="{{ pdf.id }}"
+                <option style="overflow-wrap: break-word" value="{{ pdf.id }}"
                         {% if pdf.id|stringformat:"s" == selected_pdf_id %}
                 selected{% endif %}>{{ pdf.title }}</option>
                 {% endfor %}
@@ -101,7 +101,7 @@
             <div style="flex: 1; display: flex;">
                 <input style="flex: 1; min-width: 0; margin-right: 5px;" class="form-control" type="text" id="textInput" name="user_question"
                     placeholder="Type your question here...">
-                <button style="flex-shrink: 0;" type="submit" class="btn btn-primary">Send</button>
+                <button style="flex-shrink: 0; margin: 5px;" type="submit" class="btn btn-primary">Generate</button>
             </div>
         </form>
 
@@ -279,7 +279,7 @@
 </script>
 
 
-
+{% endwith %}
 {% endblock %}
 
 
