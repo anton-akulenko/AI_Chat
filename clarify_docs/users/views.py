@@ -11,7 +11,7 @@ from .forms import RegisterForm, AvatarForm, UpdateUserForm
 from .models import Avatar
 from llm_chat.models import UserData
 
-
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
@@ -73,8 +73,8 @@ class RegisterView(View):
 
             # Get current site domain
             # !!!!!!!!!!!!!!! додати домен !!!!!!!!!!!!!!!!!!!
-            # domain = get_current_site(request).domain
-            domain = "127.0.0.1:8000"
+            domain = get_current_site(request).domain
+            # domain = "127.0.0.1:8000"
             # Prepare email text
             mail_subject = 'Activate your account'
             message = render_to_string('users/account_activation_email.html', {
@@ -126,12 +126,10 @@ def profile(request):
 
     user = request.user
     user_id = request.user.id
-    # user_plan = UserData.objects.get(user=user)
     avatar = Avatar.objects.filter(user_id=user_id).first()
     return render(request, 'users/profile.html',
                   context={'users': user,
                            'avatar': avatar,
-                        #    'user_plan': user_plan
                            })
 
 
@@ -199,19 +197,11 @@ def user_statistic(request):
     time_joined = current_time - user.date_joined
     time_joined = format_duration(time_joined)
 
-    # max_questions_allowed = user_data.max_questions_allowed_for_plan()
-    # max_files_allowed = user_data.max_files_allowed_for_plan()
-    # width_questions = user_data.total_questions_asked / max_questions_allowed * 100
-    # width_files = user_data.total_files_uploaded / max_files_allowed * 100
     return render(request, 'users/user_statistic.html',
                   context={'user': user,
                            'avatar': avatar,
                            "time_joined": time_joined,
                            'user_data': user_data,
-                        #    "max_questions": max_questions_allowed,
-                        #    "max_files": max_files_allowed,
-                        #    "width_questions": width_questions,
-                        #    "width_files": width_files,
                            })
 
 

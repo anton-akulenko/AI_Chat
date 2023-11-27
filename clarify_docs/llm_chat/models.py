@@ -20,7 +20,6 @@ class CustomProfile(models.Model):
 class PDFDocument(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
-    # document = models.FileField(upload_to='pdf_documents/')
     documentContent = models.TextField(null=True, blank=True)
     embedding = models.TextField()
 
@@ -35,7 +34,6 @@ class ChatMessage(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     pdf_document = models.ForeignKey(PDFDocument, on_delete=models.CASCADE, null=True)
     message = models.TextField()
-    # question = models.TextField()
     answer = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
     tokens = models.FloatField(default=0)
