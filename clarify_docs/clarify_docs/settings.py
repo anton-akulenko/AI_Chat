@@ -30,7 +30,7 @@ SECRET_KEY = "ZOSWJ7meyKMTZKoYsggbKDOuozMCXzg5r28nCiIvakD3CUvnk1"
 # os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 # ALLOWED_HOSTS = ["*"]
 ALLOWED_HOSTS = ["*", "localhost", "127.0.0.1", "0.0.0.0"]
@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # "profiles",
+    "hug_chat",
     "llm_chat",
     'users',
 ]

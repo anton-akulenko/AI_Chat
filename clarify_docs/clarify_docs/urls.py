@@ -26,5 +26,6 @@ urlpatterns = [
     path('', include('llm_chat.urls')),
     path('users/', include('users.urls')),
     path('llm_chat/', include('llm_chat.urls')),
+    path('', include('hug_chat.urls')),
 ]
 

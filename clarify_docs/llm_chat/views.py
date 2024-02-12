@@ -15,11 +15,13 @@ from django.http import JsonResponse
 import openai
 from dotenv import load_dotenv
 from langchain.vectorstores.faiss import FAISS
+from openai import RateLimitError
 from pptx import Presentation
 
 from .forms import PDFUploadForm, PDFUpdateForm, PDFDocumentForm2
 from .models import ChatMessage, PDFDocument, UserData
 from users.models import Avatar
+# from ..users.models import Avatar
 # CHUNK_SIZE = 1024
 # CHUNK_OVERLAP = 200
 # MAX_LEN = 512
@@ -30,10 +32,10 @@ load_dotenv()
 
 
 def main(request):
-    # avatar = Avatar.objects.filter(user_id=request.user.id).first()
-    return render(request, 'llm_chat/index.html', context={})  # home.html
+    avatar = Avatar.objects.filter(user_id=request.user.id).first()
+    # return render(request, 'llm_chat/index.html', context={})  # home.html
 
-    # return render(request, 'llm_chat/index.html', context={'avatar': avatar,})  # home.html
+    return render(request, 'llm_chat/index.html', context={'avatar': avatar,})  # home.html
 
 
 def get_pdf_text(file):
@@ -97,7 +99,7 @@ def get_conversation_chain(vectorstore):
 def upload_pdf(request):
     
     user = request.user
-    # avatar = Avatar.objects.filter(user_id=user.id).first()
+    avatar = Avatar.objects.filter(user_id=user.id).first()
     try:
         user_data = UserData.objects.get(user=user)
     except UserData.DoesNotExist:
@@ -132,42 +134,40 @@ def upload_pdf(request):
     # not needed for now
     chat_message = ChatMessage.objects.all()
 
-    return render(request, 'llm_chat/chat.html', {'form': form, 'user_pdfs': user_pdfs})
-    # return render(request, 'llm_chat/chat.html', {'form': form, 'user_pdfs': user_pdfs, 'avatar': avatar})
+    # return render(request, 'llm_chat/chat.html', {'form': form, 'user_pdfs': user_pdfs})
+    return render(request, 'llm_chat/chat.html', {'form': form, 'user_pdfs': user_pdfs, 'avatar': avatar})
 
 
 @login_required(login_url="/login/")
 def ask_question(request):
+    # try:
+    user = request.user
+    avatar = Avatar.objects.filter(user_id=user.id).first()
     try:
-        user = request.user
-        # avatar = Avatar.objects.filter(user_id=user.id).first()
+        user_data = UserData.objects.get(user=user)
+    except UserData.DoesNotExist:
+        user_data = UserData.objects.create(user=user, total_files_uploaded=0, total_questions_asked=0)
+
+    chat_history = ChatMessage.objects.filter(user=request.user).order_by('timestamp')[:10]
+    chat_response = ''
+    user_pdfs = PDFDocument.objects.filter(user=request.user)
+    user_question = ""
+    selected_pdf = None  # selected_pdf_id або об'єкт PDFDocument, треба перевіряти ще
+
+    if request.method == 'POST':
+        user_question = request.POST.get('user_question')
+        selected_pdf_id = request.POST.get('selected_pdf')
+        selected_pdf = get_object_or_404(PDFDocument, id=selected_pdf_id)
+        text_chunks = get_text_chunks(selected_pdf.documentContent)
+
+        knowledge_base = get_vectorstore(text_chunks)
+        conversation_chain = get_conversation_chain(knowledge_base)
         try:
-            user_data = UserData.objects.get(user=user)
-        except UserData.DoesNotExist:
-            user_data = UserData.objects.create(user=user, total_files_uploaded=0, total_questions_asked=0)
-
-        chat_history = ChatMessage.objects.filter(user=request.user).order_by('timestamp')[:10]
-        chat_response = ''
-        user_pdfs = PDFDocument.objects.filter(user=request.user)
-        user_question = ""
-        selected_pdf = None  # selected_pdf_id або об'єкт PDFDocument, треба перевіряти ще
-
-        if request.method == 'POST':
-            # Check if the user has exceeded the limit for questions per file
-            user_question = request.POST.get('user_question')
-            selected_pdf_id = request.POST.get('selected_pdf')
-            selected_pdf = get_object_or_404(PDFDocument, id=selected_pdf_id)
-            text_chunks = get_text_chunks(selected_pdf.documentContent)
-
-            knowledge_base = get_vectorstore(text_chunks)
-            conversation_chain = get_conversation_chain(knowledge_base)
-
             with get_openai_callback() as cb:
                 response = conversation_chain({'question': user_question})
-                tokens = cb.total_tokens
-                # print(f"Prompt Tokens: {cb.prompt_tokens}")
-                # print(f"Completion Tokens: {cb.completion_tokens}")
-                cost = cb.total_cost
+
+            tokens = cb.total_tokens
+            cost = cb.total_cost
 
             chat_response = response["answer"]
             chat_message = ChatMessage(user=request.user, message=user_question, answer=chat_response,
@@ -177,18 +177,27 @@ def ask_question(request):
             user_data.total_cost += cost
             user_data.save()
             chat_message.save()
+        except RateLimitError as e:
+            chat_response = e.response
+            chat_message = ChatMessage(user=request.user, message=user_question, answer=chat_response,
+                                       pdf_document=selected_pdf, tokens=0.0, cost=0.0)  # об'єкт PDFDocument
+            user_data.total_questions_asked += 1
+            user_data.save()
+            chat_message.save()
+            # print("#############################################", e.response)
+            # return render(request, 'llm_chat/chat.html', context = {'limit_error': e. })
 
-        # Отримуємо повідомлення, які відносяться до обраного PDFDocument
-        chat_message = ChatMessage.objects.filter(user=request.user, pdf_document=selected_pdf).order_by('timestamp')
+    # Отримуємо повідомлення, які відносяться до обраного PDFDocument
+    chat_message = ChatMessage.objects.filter(user=request.user, pdf_document=selected_pdf).order_by('timestamp')
 
-        # context = {'chat_response': chat_response, 'chat_history': chat_history, 'user_question': user_question,
-        #            'user_pdfs': user_pdfs, 'chat_message': chat_message, 'avatar': avatar}
-        context = {'chat_response': chat_response, 'chat_history': chat_history, 'user_question': user_question,
-                   'user_pdfs': user_pdfs, 'chat_message': chat_message}
+    context = {'chat_response': chat_response, 'chat_history': chat_history, 'user_question': user_question,
+               'user_pdfs': user_pdfs, 'chat_message': chat_message, 'avatar': avatar}
+    # context = {'chat_response': chat_response, 'chat_history': chat_history, 'user_question': user_question,
+    #            'user_pdfs': user_pdfs, 'chat_message': chat_message}
 
-        return render(request, 'llm_chat/chat.html', context)
-    except Exception as e:
-        return e
+    return render(request, 'llm_chat/chat.html', context)
+    # except Exception as e:
+    #     return e
 
 
 @login_required(login_url="/login/")

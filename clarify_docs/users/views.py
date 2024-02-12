@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.views import View
 from django.contrib import messages
-from django.contrib.auth.views import PasswordResetView
+from django.contrib.auth.views import PasswordResetView, PasswordChangeView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from cloudinary.exceptions import Error as CloudinaryError
