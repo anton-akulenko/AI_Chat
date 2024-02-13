@@ -1,21 +1,21 @@
 from django.contrib.auth.models import User
 from django.db import models
+from llm_chat.models import UserData
 
-
-class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    email = models.EmailField(unique=True)
-    username = models.CharField(max_length=30, null=True)  # Make the field nullable
-    first_name = models.CharField(max_length=30, null=True)  # Make the field nullable
-
-    def __str__(self):
-        return self.user.username
+# class UserProfile(models.Model):
+#     user = models.OneToOneField(User, on_delete=models.CASCADE)
+#     email = models.EmailField(unique=True)
+#     username = models.CharField(max_length=30, null=True)  # Make the field nullable
+#     first_name = models.CharField(max_length=30, null=True)  # Make the field nullable
+#
+#     def __str__(self):
+#         return self.user.username
     
 
 class Chat(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey(
-        'UserProfile',
+        UserData,
         on_delete=models.CASCADE,
         related_name='chats', 
         null=True

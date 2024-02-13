@@ -37,56 +37,6 @@
 </head>
 <body id="page-top" class="index" data-pinterest-extension-installed="cr1.3.4">
     
-    <!-- Navigation -->
-    <nav class="navbar navbar-default navbar-fixed-top navbar-shrink">
-        <div class="container">
-            <div class="navbar-header page-scroll">
-                <a class="navbar-brand page-scroll" href="/">PowerChat</a>
-            </div>
-
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="hidden active">
-                        <a href="/#page-top"></a>
-                    </li>
-                    {% if user.is_authenticated %}
-                        <li class="">
-                            <a class="page-scroll" href="/chats">Chats</a>
-                        </li>
-                        <li class="">
-                            <a class="page-scroll" href="/hug_chat">Hug Chat</a>
-                        </li>
-                    {% endif %}
-                    
-                    <li class="">
-                        <a class="page-scroll" href="/#team">Team</a>
-                    </li>
-                        {% if not user.is_authenticated %}
-                            <li>
-                                <a class="nav navbar-nav navbar-right page-scroll" href="{% url 'user_login' %}">Login</a>
-                            </li>
-                            <li>
-                                <a class="nav navbar-nav navbar-right page-scroll" href="{% url 'user_signup' %}">Registration</a>
-                            </li>
-                        {% else %}
-                            <li>
-                                <a class="nav navbar-nav navbar-right page-scroll" href="{% url 'user_logout' %}">Logout</a>
-                            </li>
-                            <li>
-                                <a class="nav navbar-nav navbar-right page-scroll" href="/edit_profile">Edit Profile</a>
-                            </li>
-                            <li>
-                                <a class="nav navbar-nav navbar-right page-scroll" href="/deactivate_account">Deactivate Account</a>
-                            </li>
-                        {% endif %}
-                    </ul>
-                </ul>
-            </div>
-            <!-- /.navbar-collapse -->
-        </div>
-        <!-- /.container-fluid -->
-    </nav>
-
 
 <header class="u-clearfix u-header u-header" id="sec-6302">
 </header>

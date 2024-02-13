@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 
 from .models import Chat, File, Question, Answer, Request
-from .models import UserProfile
+from llm_chat.models import UserData
 from .data_extractor import read_file
 from .qa_model import QAModel
 from .elasticsearch_crud import record_context, connection
@@ -11,9 +11,8 @@ from .elasticsearch_crud import record_context, connection
 
 @login_required
 def main(request):
-    user = UserProfile.objects.filter(id = request.user.id).get()
+    user = UserData.objects.filter(id = request.user.id).get()
     user_chats = [chat for chat in Chat.objects.filter(user_id=user).all()]
-    print(request.method)
 
     if request.method == 'POST' and request.FILES.getlist('myfile'):
         files = request.FILES.getlist('myfile')
@@ -36,7 +35,7 @@ def main(request):
 
 @login_required
 def chat_detail(request, chat_id):
-    user = UserProfile.objects.filter(id = request.user.id).get()
+    user = UserData.objects.filter(id = request.user.id).get()
     current_chat = Chat.objects.filter(id=chat_id).get()
     user_chats = [chat for chat in Chat.objects.filter(user_id=user).all()]
 
@@ -49,6 +48,7 @@ def chat_detail(request, chat_id):
         question.save()
         
         model = QAModel(chat_id)
+        # print("hhhhhhhhhhhhhhhhhhhhh", question.text)
         answer_text = model.get_answer(question.text)
 
         answer = Answer(chat=current_chat, text=answer_text)
