@@ -1,0 +1,289 @@
+{% load static %}
+<!DOCTYPE html>
+<html style="font-size: 16px;" lang="ua">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet"
+        href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    {% load static %}
+    <link rel="shortcut icon" type="image/png" href="{% static 'img/favicon/logo.png' %}">
+    <link rel="stylesheet" href="{% static 'CSS/login.css' %}">
+    <link rel="stylesheet" href="{% static 'CSS/nicepage.css' %}">
+    {% block title %}{% endblock %}
+        <link rel="shortcut icon" type="image/png" href="{% static 'img/favicon/logo.png' %}">
+        <link rel="stylesheet"
+            href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+            integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+            crossorigin="anonymous">
+        <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
+        <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
+        <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="{% static 'CSS/main.css' %}">
+        <script src="{% static 'JS/menu.js' %}"></script>
+        <script class="u-script" type="text/javascript" src="{% static 'JS/jquery.js' %}" defer=""></script>
+    <script class="u-script" type="text/javascript" src="{% static 'JS/nicepage.js' %}" defer=""></script>
+    <script type="application/ld+json">{
+        "@context": "http://schema.org",
+        "@type": "Organization",
+        "name": ""
+    }</script>
+    <meta data-intl-tel-input-cdn-path="intlTelInput/">
+</head>
+<body id="page-top" class="index" data-pinterest-extension-installed="cr1.3.4">
+    
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-fixed-top navbar-shrink">
+        <div class="container">
+            <div class="navbar-header page-scroll">
+                <a class="navbar-brand page-scroll" href="/">PowerChat</a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="hidden active">
+                        <a href="/#page-top"></a>
+                    </li>
+                    {% if user.is_authenticated %}
+                        <li class="">
+                            <a class="page-scroll" href="/chats">Chats</a>
+                        </li>
+                        <li class="">
+                            <a class="page-scroll" href="/hug_chat">Hug Chat</a>
+                        </li>
+                    {% endif %}
+                    
+                    <li class="">
+                        <a class="page-scroll" href="/#team">Team</a>
+                    </li>
+                        {% if not user.is_authenticated %}
+                            <li>
+                                <a class="nav navbar-nav navbar-right page-scroll" href="{% url 'user_login' %}">Login</a>
+                            </li>
+                            <li>
+                                <a class="nav navbar-nav navbar-right page-scroll" href="{% url 'user_signup' %}">Registration</a>
+                            </li>
+                        {% else %}
+                            <li>
+                                <a class="nav navbar-nav navbar-right page-scroll" href="{% url 'user_logout' %}">Logout</a>
+                            </li>
+                            <li>
+                                <a class="nav navbar-nav navbar-right page-scroll" href="/edit_profile">Edit Profile</a>
+                            </li>
+                            <li>
+                                <a class="nav navbar-nav navbar-right page-scroll" href="/deactivate_account">Deactivate Account</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+
+
+<header class="u-clearfix u-header u-header" id="sec-6302">
+</header>
+
+<section class="u-clearfix u-section-1" id="carousel_8790">
+    <div class="u-clearfix u-sheet u-sheet-1">
+        <div class="u-palette-4-dark-1 u-shape u-shape-circle u-shape-1"></div>
+        <div class="u-expanded-width-xs u-image u-image-circle u-preserve-proportions u-image-1" data-image-width="1200"
+             data-image-height="1048">
+        </div>
+
+
+        <style>
+            .chats {
+            float: left;
+            width: 20%;
+            margin-left: 40%;
+            margin-top: 3%;
+            margin-right: 30%;
+            }
+            .chats .btn {
+            margin: 0 10px 10px 0;
+            }
+            .new-chat{
+                float: left;
+                width: 20%;
+                margin-left: 40%;
+                margin-top: 5%;
+                margin-right: 30%;
+            }
+            .download {
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            max-width: 100%;
+        }
+        .for_red{
+            color: white;
+        }
+        
+        </style>
+
+        <div class="download">
+            <a
+                        {% if user.is_authenticated %}
+                        href="#sec-c0d4"
+                        {% else %}
+                        href="/"
+                        {% endif %}
+
+                    class="u-active-white u-border-2 u-border-palette-4-dark-1 u-btn u-btn-round u-button-style u-color-scheme-summer-time u-color-style-multicolor-1 u-custom-font u-dialog-link u-font-raleway u-hover-black u-hover-feature u-radius-30 u-text-active-grey-10 u-text-body-color u-text-hover-grey-10 u-btn-1"
+                    data-animation-name="pulse" data-animation-duration="0" data-animation-direction=""><div class="for_red">➕ New Chat</div></a>
+                    <div class="for_red"></div>
+        </div>
+   
+
+
+
+        <div class="chats">
+            <div class="form-group mb-2" style="margin-top: 10%">
+                {% for chat in chats %}
+                <a class="btn btn-primary col-sm-12 mb-2" href="{% url 'chat_detail' chat.id %}">
+                    Chat #{{ chat.id }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+
+
+
+
+
+<form method="post" enctype="multipart/form-data">
+{#      action="/storage/">#}
+    <section
+            class="u-align-center u-clearfix u-container-style u-dialog-block u-opacity u-opacity-0 u-valign-middle u-white u-dialog-section-7"
+            id="sec-c0d4">
+        {% csrf_token %}
+        <div class="u-border-2 u-border-black u-container-style u-dialog u-radius-50 u-shape-round u-white u-dialog-1">
+            <div class="u-container-layout u-container-layout-1">
+                <h2 class="u-align-center u-text u-text-default u-text-1">Welcome!</h2>
+                <p class="u-align-center u-text u-text-2"> Upload files to find out </p>
+                <input type="file" id="myFile" name="myfile" style="margin-top: 40px; margin-bottom: 30px; margin-left: 15px" multiple accept=".pdf, .txt, .docx">
+
+                <button class="u-border-2 u-border-black u-border-hover-black u-btn u-btn-round u-button-style u-hover-palette-4-light-1 u-radius-50 u-text-black u-text-hover-black u-white u-btn-2">Upload</button>
+            </div>
+        </div>
+    </section>
+</form>
+
+
+
+
+
+
+
+
+<style>.u-dialog-section-7 .u-dialog-1 {
+    width: 566px;
+    min-height: 366px;
+    height: auto;
+    box-shadow: 5px 5px 20px 0px rgba(0, 0, 0, 0.4);
+    margin: 60px auto;
+}
+.new_chat{
+                float: left;
+                width: 20%;
+                margin-left: 40%;
+                margin-top: 5%;
+                margin-right: 30%;
+            }
+
+.u-dialog-section-7 .u-container-layout-1 {
+    padding: 40px 30px;
+}
+
+.u-dialog-section-7 .u-text-1 {
+    font-size: 2.5rem;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-weight: 700;
+    margin: 41px auto 0;
+}
+
+.u-dialog-section-7 .u-text-2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 20px 0 0;
+}
+
+.u-dialog-section-7 .u-btn-1 {
+    border-style: solid;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    letter-spacing: 1px;
+    background-image: none;
+    margin: 20px 20px 0 auto;
+    padding: 9px 31px 9px 29px;
+}
+
+.u-dialog-section-7 .u-btn-2 {
+    border-style: solid;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    letter-spacing: 1px;
+    background-image: none;
+    margin: 6px auto 0;
+    padding: 9px 31px 9px 29px;
+}
+
+.u-dialog-section-7 .u-icon-1 {
+    width: 15px;
+    height: 15px;
+    left: auto;
+    top: 17px;
+    position: absolute;
+    right: 16px;
+}
+
+@media (max-width: 991px) {
+    .u-dialog-section-7 .u-container-layout-1 {
+        padding-top: 30px;
+        padding-bottom: 30px;
+    }
+}
+
+@media (max-width: 767px) {
+    .u-dialog-section-7 .u-dialog-1 {
+        width: 540px;
+    }
+}
+
+@media (max-width: 575px) {
+    .u-dialog-section-7 .u-dialog-1 {
+        width: 340px;
+    }
+
+    .u-dialog-section-7 .u-container-layout-1 {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .u-dialog-section-7 .u-text-1 {
+        font-size: 2.25rem;
+    }
+
+    .u-dialog-section-7 .u-btn-1 {
+        margin-right: 0;
+    }
+}</style>
+</body>
+</html>
+
+
+
