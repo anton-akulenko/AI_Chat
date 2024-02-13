@@ -187,12 +187,12 @@ textarea {
         }
         .chat-history-container,
         .message.sent {
-            background-color: #fff;
             border: 1px solid #ccd6f6;
+            text-align: right;
         }
         .message.received {
-            background-color: #f0f3fa;
             border: 1px solid #ccd6f6;
+            text-align: left;
         }
         .input-area {
             background-color: #fff;
