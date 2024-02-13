@@ -65,44 +65,44 @@
 </div>
 
 <div class="chat-container">
-    <div class="chat-history-container" id="chat-history-container">
 
-        <div class="chat-history">
-<!--    <div class="chat-messages">-->
+    <div class="chat-history">
+        <!--    <div class="chat-messages">-->
         {% for request in requests %}
-            <div class="message sent">
-                <p class="message-text"><strong>User: </strong>{{ request.message }}</p>
-            </div>
-            <div class="message received">
-                <p class="message-text"><strong>Model: </strong>{{ request.answer }}</p>
-            </div>
+        <div class="message sent">
+            <p class="message-text"><strong>User: </strong>{{ request.message }}</p>
+        </div>
+        <div class="message received">
+            <p class="message-text"><strong>Model: </strong>{{ request.answer }}</p>
+        </div>
         {% endfor %}
-<!--    </div>-->
-<!--            &lt;!&ndash; Messages &ndash;&gt;-->
-<!--            {% for message in chat_message %}-->
+        <!--    </div>-->
+        <!--            &lt;!&ndash; Messages &ndash;&gt;-->
+        <!--            {% for message in chat_message %}-->
 
-<!--            <div class="text-center">-->
-<!--                <p>{{ message.timestamp }}</p>-->
-<!--            </div>-->
-<!--            <div class="message sent">-->
-<!--                {% if avatar %}-->
-<!--                <img src="{{ avatar.image.url }}" alt="Avatar">-->
-<!--                {% else %}-->
-<!--                <img src="{% static 'llm_chat/img/human.png' %}" alt="Avatar">-->
-<!--                {% endif %}-->
-<!--                <p>{{ message.message }}</p>-->
-<!--            </div>-->
-<!--            <div class="message received">-->
-<!--                <img src="{% static 'llm_chat/img/bot.png' %}" alt="Avatar" class="right">-->
-<!--                <p>{{ message.answer }}</p>-->
-<!--            </div>-->
+        <!--            <div class="text-center">-->
+        <!--                <p>{{ message.timestamp }}</p>-->
+        <!--            </div>-->
+        <!--            <div class="message sent">-->
+        <!--                {% if avatar %}-->
+        <!--                <img src="{{ avatar.image.url }}" alt="Avatar">-->
+        <!--                {% else %}-->
+        <!--                <img src="{% static 'llm_chat/img/human.png' %}" alt="Avatar">-->
+        <!--                {% endif %}-->
+        <!--                <p>{{ message.message }}</p>-->
+        <!--            </div>-->
+        <!--            <div class="message received">-->
+        <!--                <img src="{% static 'llm_chat/img/bot.png' %}" alt="Avatar" class="right">-->
+        <!--                <p>{{ message.answer }}</p>-->
+        <!--            </div>-->
 
-<!--            {% endfor %}-->
+        <!--            {% endfor %}-->
 
-            <!-- End messages -->
-<!--        </div> &lt;!&ndash;chat-history cont&ndash;&gt;-->
+        <!-- End messages -->
+    </div> <!--chat-history cont-->
 
-            <div class="container-form">
+
+    <div class="container-form">
         <div class="form-container">
             <form action="/hug_chat/" method="post">
                 {% csrf_token %}
@@ -110,13 +110,14 @@
                 <button type="submit" class="btn btn-primary" style="margin: 0 auto;">Send</button>
             </form>
         </div>
-
-    </div>
-
+    <div >
 
 
-    </div>
-<!--        <div >-->
+
+</div>
+
+
+
 
 <!--            <form action="/hug_chat/" method="post" id="questionForm">-->
 <!--                {% csrf_token %}-->
@@ -132,8 +133,8 @@
 <!--            &lt;!&ndash;             <input type="text" placeholder="Type your message...">-->
 <!--                <button>Send</button> &ndash;&gt;-->
 <!--        </div>-->
-</div>
-</div>
+<!--    </div>-->
+<!--</div>-->
 
 
 <!-- END chat page -->
